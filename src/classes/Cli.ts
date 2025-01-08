@@ -1,31 +1,41 @@
 import inquirer from 'inquirer'; // import inquirer
-import { department, role, employee } from './SQLFunctions.js'; // import SQLFunctions
+import * as department from './department.js'; // import the department class
+import * as role from './role.js'; // import the role class
+import * as employee from './employee.js'; // import the employee class
 
 // create a class called Cli
 class Cli {
 
     // create a method called viewDepartments
     viewDepartments() {
-        department.GetAllDepartments().then((res) => {
-            console.table(res.rows);
-            this.startCli();
-        });
+        try {
+            department.getAllDepartments();
+        } catch (error) {
+            console.error('Error fetching departments:', error);
+        }
+        return this.startCli();
     }
 
     // create a method called viewRoles
     viewRoles() {
-        role.GetAllRoles().then((res) => {
-            console.table(res.rows);
-            this.startCli();
-        });
+        try {
+            console.log('Roles:');
+            role.getAllRoles();
+        } catch (error) {
+            console.error('Error fetching roles:', error);
+        }
+        this.startCli();
     }
 
     // create a method called viewEmployees
     viewEmployees() {
-        employee.GetAllEmployees().then((res) => {
-            console.table(res.rows);
-            this.startCli();
-        });
+        try {
+            console.log('Employees:');
+            employee.getAllEmployees();
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+        }
+        this.startCli();
     }
 
     // create a method called addDepartment
@@ -37,10 +47,9 @@ class Cli {
                 message: 'What is the name of the department?'
             }
         ]).then((answers) => {
-            department.AddNewDepartment(answers.name).then(() => {
-                console.log('Department added successfully');
-                this.startCli();
-            });
+            department.addNewDepartment(answers.name);
+            console.log('Department added successfully');
+            this.startCli();
         });
     }
 
@@ -49,8 +58,8 @@ class Cli {
         inquirer.prompt([
             {
                 type: 'input',
-                name: 'title',
-                message: 'What is the title of the role?'
+                name: 'name',
+                message: 'What is the name of the role?'
             },
             {
                 type: 'input',
@@ -59,14 +68,13 @@ class Cli {
             },
             {
                 type: 'input',
-                name: 'departmentId',
-                message: 'What is the department id of the role?'
+                name: 'department',
+                message: 'What is the department of the role?'
             }
         ]).then((answers) => {
-            role.AddNewRole(answers.title, answers.salary, answers.departmentId).then(() => {
-                console.log('Role added successfully');
-                this.startCli();
-            });
+            role.addNewRole(answers.title, answers.salary, answers.department);
+            console.log('Role added successfully');
+            this.startCli();
         });
     }
 
@@ -85,19 +93,18 @@ class Cli {
             },
             {
                 type: 'input',
-                name: 'roleId',
-                message: 'What is the role id of the employee?'
+                name: 'role',
+                message: 'What is the role of the employee?'
             },
             {
                 type: 'input',
-                name: 'managerId',
-                message: 'What is the manager id of the employee?'
+                name: 'manager',
+                message: 'Who is the manager of the employee?'
             }
         ]).then((answers) => {
-            employee.AddNewEmployee(answers.firstName, answers.lastName, answers.roleId, answers.managerId).then(() => {
-                console.log('Employee added successfully');
-                this.startCli();
-            });
+            employee.addNewEmployee(answers.firstName, answers.lastName, answers.role, answers.manager);
+            console.log('Employee added successfully');
+            this.startCli();
         });
     }
 
@@ -106,19 +113,23 @@ class Cli {
         inquirer.prompt([
             {
                 type: 'input',
-                name: 'employeeId',
-                message: 'What is the id of the employee?'
+                name: 'firstName',
+                message: 'What is the first name of the employee?'
             },
             {
                 type: 'input',
-                name: 'roleId',
-                message: 'What is the new role id of the employee?'
+                name: 'lastName',
+                message: 'What is the last name of the employee?'
+            },
+            {
+                type: 'input',
+                name: 'role',
+                message: 'What is the new role of the employee?'
             }
         ]).then((answers) => {
-            employee.UpdateEmployeeRole(answers.employeeId, answers.roleId).then(() => {
-                console.log('Employee role updated successfully');
-                this.startCli();
-            });
+            employee.updateEmployeeRole(answers.firstName, answers.lastName, answers.role);
+            console.log('Employee role updated successfully');
+            this.startCli();
         });
 
     }
@@ -131,31 +142,44 @@ class Cli {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],
+                choices: [{
+                    name: 'View all departments',
+                    value: 'View_all_departments'
+                }, {
+                    name: 'View all roles',
+                    value: 'View_all_roles'
+                }, /*{
+                    name: 'View all employees',
+                    value: 'View all employees'
+                }, {
+                    name: 'Add a department',
+                    value: 'Add a department'
+                }, {
+                    name: 'Add a role',
+                    value: 'Add a role'
+                }, {
+                    name: 'Add an employee',
+                    value: 'Add an employee'
+                }, {
+                    name: 'Update an employee role',
+                    value: 'Update an employee role'
+                }*/]
             }
         ]).then((answers) => {
-            switch (answers.action) {
-                case 'View all departments':
-                    this.viewDepartments();
-                    break;
-                case 'View all roles':
-                    this.viewRoles();
-                    break;
-                case 'View all employees':
-                    this.viewEmployees();
-                    break;
-                case 'Add a department':
-                    this.addDepartment();
-                    break;
-                case 'Add a role':
-                    this.addRole();
-                    break;
-                case 'Add an employee':
-                    this.addEmployee();
-                    break;
-                case 'Update an employee role':
-                    this.updateEmployeeRole();
-                    break;
+            if (answers.action === 'View_all_departments') {
+                this.viewDepartments();
+            } else if (answers.action === 'View_all_roles') {
+                this.viewRoles();
+            } else if (answers.action === 'View all employees') {
+                this.viewEmployees();
+            } else if (answers.action === 'Add a department') {
+                this.addDepartment();
+            } else if (answers.action === 'Add a role') {
+                this.addRole();
+            } else if (answers.action === 'Add an employee') {
+                this.addEmployee();
+            } else if (answers.action === 'Update an employee role') {
+                this.updateEmployeeRole();
             }
         });
     }

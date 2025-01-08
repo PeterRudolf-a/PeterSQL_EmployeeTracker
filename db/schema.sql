@@ -3,18 +3,18 @@ CREATE DATABASE employees_db;
 
 \c employees_db;
 
-CREATE TABLE department (
+CREATE TABLE departments (
   id SERIAL PRIMARY KEY,
   name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL,
     department_id INTEGER NOT NULL,
     FOREIGN KEY (department_id)
-    REFERENCES department(id)
+    REFERENCES departments(id)
     ON DELETE CASCADE
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE employees (
     role_id INTEGER,
     manager_id INTEGER,
     FOREIGN KEY (role_id)
-    REFERENCES role(id)
+    REFERENCES roles(id)
     ON DELETE SET NULL,
     FOREIGN KEY (manager_id)
     REFERENCES employees(id)
