@@ -19,7 +19,6 @@ class Cli {
     // create a method called viewRoles
     viewRoles() {
         try {
-            console.log('Roles:');
             role.getAllRoles();
         } catch (error) {
             console.error('Error fetching roles:', error);
@@ -30,7 +29,6 @@ class Cli {
     // create a method called viewEmployees
     viewEmployees() {
         try {
-            console.log('Employees:');
             employee.getAllEmployees();
         } catch (error) {
             console.error('Error fetching employees:', error);
@@ -142,33 +140,20 @@ class Cli {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: [{
-                    name: 'View all departments',
-                    value: 'View_all_departments'
-                }, {
-                    name: 'View all roles',
-                    value: 'View_all_roles'
-                }, /*{
-                    name: 'View all employees',
-                    value: 'View all employees'
-                }, {
-                    name: 'Add a department',
-                    value: 'Add a department'
-                }, {
-                    name: 'Add a role',
-                    value: 'Add a role'
-                }, {
-                    name: 'Add an employee',
-                    value: 'Add an employee'
-                }, {
-                    name: 'Update an employee role',
-                    value: 'Update an employee role'
-                }*/]
+                choices: [
+                    'View all departments',
+                    'View all roles',
+                    'View all employees',
+                    'Add a department',
+                    'Add a role',
+                    'Add an employee',
+                    'Update an employee role'
+                ]
             }
         ]).then((answers) => {
-            if (answers.action === 'View_all_departments') {
+            if (answers.action === 'View all departments') {
                 this.viewDepartments();
-            } else if (answers.action === 'View_all_roles') {
+            } else if (answers.action === 'View all roles') {
                 this.viewRoles();
             } else if (answers.action === 'View all employees') {
                 this.viewEmployees();
