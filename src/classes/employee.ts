@@ -46,8 +46,6 @@ async function getAllEmployees() {
 
 // create a static method called addNewEmployee
 async function addNewEmployee(firstName: string, lastName: string, role_id: string, manager_id?: string) {
-    console.log('Inserting employee with first name:', firstName, 'last name:', lastName, 'role:', role_id, 'manager:', manager_id);
-
     try {
         // check if the role exists
         const role = await checkRole(role_id);
@@ -62,7 +60,7 @@ async function addNewEmployee(firstName: string, lastName: string, role_id: stri
         let VALUES = [firstName, lastName, role_id, manager_id];
         // query the database using the pool object
         await pool.query(sql, VALUES);
-        console.log('\nEmployee added successfully');
+        console.log('Employee added successfully');
     } catch (err) {
         console.error('Error executing query', err);
     }
@@ -80,7 +78,7 @@ async function deleteEmployee(userFirstName: string, userLastName: string) {
             console.error('Error executing query', err);
             return;
         }
-        console.log('\nEmployee deleted successfully');
+        console.log('Employee deleted successfully');
     });
 }
 
@@ -92,7 +90,6 @@ async function updateEmployeeRole(firstName: string, lastName: string, roleType:
     // query the database using the pool object
     try {
         await pool.query(sql, VALUES);
-        console.log('\nEmployee updated successfully');
     } catch (err) {
         console.error('Error executing query', err);
     }

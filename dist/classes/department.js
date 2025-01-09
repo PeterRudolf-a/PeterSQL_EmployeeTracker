@@ -26,7 +26,7 @@ async function addNewDepartment(departmentName) {
     // query the database using the pool object
     try {
         await pool.query(sql, VALUES);
-        console.log('\nDepartment added successfully');
+        console.log('Department added successfully');
     }
     catch (err) {
         console.error('Error executing query', err);
@@ -43,7 +43,7 @@ function deleteDepartment(department) {
             console.error('Error executing query', err);
             return;
         }
-        console.log('\nDepartment deleted successfully');
+        console.log('Department deleted successfully');
     });
 }
 // export the functions to be used in other files

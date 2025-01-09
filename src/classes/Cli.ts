@@ -41,19 +41,18 @@ class Cli {
     }
 
     // create a method called addDepartment
-    addDepartment() {
+    async addDepartment() {
         // Prompt the user to enter the department name
-        inquirer.prompt([
+        const answers = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'name',
                 message: 'What is the name of the department?'
             }
-        ]).then((answers) => {
-            // Call the addNewDepartment method with the department name
-            department.addNewDepartment(answers.name);
-            this.startCli();
-        });
+        ]);
+        // Call the addNewDepartment method with the department name
+        department.addNewDepartment(answers.name);
+        this.startCli();
     }
 
     // create a method called removeDepartment
@@ -193,29 +192,31 @@ class Cli {
     // create a method called updateEmployeeRole
     async updateEmployeeRole() {
         // Prompt the user to select an employee and a new role
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'name',
-                message: 'Which employee do you want to update?',
-                choices: await employeeChoices(), // Await the employee choices
-            },
-            {
-                type: 'list',
-                name: 'role',
-                message: 'What is the new role of the employee?',
-                choices: await roleChoices(), // Await the role choices
-            }
-        ]).then((answers) => {
+        try {
+            const answers = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'name',
+                    message: 'Which employee do you want to update?',
+                    choices: await employeeChoices(), // Await the employee choices
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'What is the new role of the employee?',
+                    choices: await roleChoices(), // Await the role choices
+                }
+            ]);
             // Split the employee name into first and last
-            let first_name = answers.name.split(' ')[0];
-            let last_name = answers.name.split(' ')[1];
-            // Call the updateEmployee method with the first and last name
-            employee.updateEmployeeRole(first_name, last_name, answers.role);
-            // Restart the CLI
+            const [first_name, last_name] = answers.name.split(' ');
+            // Call the updateEmployeeRole method with the first and last name
+            await employee.updateEmployeeRole(first_name, last_name, answers.role);
+            await employee.updateEmployeeRole(first_name, last_name, answers.role);
+            console.log(`Successfully updated role for ${answers.name}`);
             this.startCli();
-        });
-
+        } catch (error) {
+            console.error('Error updating employee:', error);
+        }
     }
 
     // create a method called removeEmployee

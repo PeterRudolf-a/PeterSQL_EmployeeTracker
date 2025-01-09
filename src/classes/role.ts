@@ -37,7 +37,6 @@ async function getAllRoles() {
 
 // create a static method called addNewRole
 async function addNewRole(title: string, salary: number, department: string) {
-    console.log('Inserting role with title:', title, 'salary:', salary, 'department:', department)
     try {
         // check if the department exists
         const departmentId = await checkDepartment(department);
@@ -51,8 +50,8 @@ async function addNewRole(title: string, salary: number, department: string) {
                      VALUES ($1, $2, $3) RETURNING *`;
         const values = [title, salary, departmentId];
         // query the database using the pool object
-        const result = await pool.query(sql, values);
-        console.log('\nRole added successfully:', result.rows[0]);
+        await pool.query(sql, values);
+        console.log('Role added successfully:');
     } catch (err) {
         console.error('Error executing query', err);
     }
@@ -69,7 +68,7 @@ function deleteRole(role: string) {
             console.error('Error executing query', err);
             return;
         }
-        console.log('\nRole deleted successfully');
+        console.log('Role deleted successfully');
     });
 }
 
