@@ -29,10 +29,10 @@ const employeeChoices = async () => {
 class Cli {
 
     // create a method called viewDepartments
-    viewDepartments() {
+    async viewDepartments() {
         try {
             // Call the getAllDepartments method from the department class
-            department.getAllDepartments();
+            await department.getAllDepartments();
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
@@ -75,10 +75,10 @@ class Cli {
     }
 
     // create a method called viewRoles
-    viewRoles() {
+    async viewRoles() {
         try {
             // Call the getAllRoles method from the role class
-            role.getAllRoles();
+            await role.getAllRoles();
         } catch (error) {
             console.error('Error fetching roles:', error);
         }
@@ -130,10 +130,10 @@ class Cli {
     }
 
     // create a method called viewEmployees
-    viewEmployees() {
+    async viewEmployees() {
         try {
-            // Call the getAllEmployees method from the employee class
-            employee.getAllEmployees();
+            // Call the getAllEmployees method from the employee class and wait for it to complete
+            await employee.getAllEmployees();
         } catch (error) {
             console.error('Error fetching employees:', error);
         }

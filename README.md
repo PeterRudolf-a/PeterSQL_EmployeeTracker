@@ -35,9 +35,7 @@ In the terminal: npm i, then type npm run build. Then run npm run start.
 
 
 ## Issues
-The client runs twice.
-Output tables are not formatted cleanly.
-Tables and other logs in the terminal get cut off.
+The client runs twice if you press arrow key.
 
 ## Video Walkthrough
 

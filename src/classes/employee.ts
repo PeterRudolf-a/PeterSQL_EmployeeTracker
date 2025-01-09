@@ -14,8 +14,7 @@ async function checkRole(role: string) {
 }
 
 // create a static method called getAllEmployees
-function getAllEmployees() {
-    // create a SQL query to select all employees with their roles, departments, salaries, and managers
+async function getAllEmployees() {
     const sql = `SELECT employees.id, 
                         employees.first_name, 
                         employees.last_name, 
@@ -27,14 +26,22 @@ function getAllEmployees() {
                  LEFT JOIN roles ON employees.role_id = roles.id
                  LEFT JOIN departments ON roles.department_id = departments.id
                  LEFT JOIN employees AS manager ON employees.manager_id = manager.id`;
-    // query the database using the pool object
-    pool.query(sql, (err, res) => {
-        if (err) {
-            console.error('Error executing query', err);
-            return;
+    
+    try {
+        const result = await pool.query(sql);
+        
+        // Log the result in a table format
+        console.log(`\nid\tfirst_name\t\tlast_name\t\ttitle\t\t\tdepartment\t\t\tsalary\t\tmanager`);
+        console.log(`--\t-----------------\t-------------\t\t--------------\t\t\t---------\t\t------\t\t------------`);
+        for (const employee of result.rows) {
+            let manager = employee.manager ? employee.manager : 'None';
+            console.log(
+                `${employee.id}\t${(employee.first_name || '').padEnd(20)}\t${(employee.last_name || '').padEnd(20)}\t${(employee.title || '').padEnd(30)}\t${(employee.department || '').padEnd(20)}\t${(employee.salary || '0').toString().padEnd(10)}\t${manager}`
+            );
         }
-        console.table(res.rows);
-    });
+    } catch (err) {
+        console.error('Error executing query', err);
+    }
 }
 
 // create a static method called addNewEmployee

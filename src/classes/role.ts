@@ -3,14 +3,6 @@ import { pool } from '../connection.js';
 //import { QueryResult } from 'pg';
 import { QueryResult } from 'pg';
 
-function logWithFixedLength(columns: any[], columnWidths: any[]) {
-    const formattedRow = columns.map((col, index) => {
-        const width = columnWidths[index] || 10; // Default to 10 if no width is specified
-        return String(col).padEnd(width); // Pad each column to the specified width
-    }).join(""); // Join the columns without extra spaces between
-    console.log(formattedRow);
-}
-
 // create a static method called checkDepartment to check if a department exists
 async function checkDepartment(department: string) {
     // create a SQL query to select the department id
@@ -22,35 +14,25 @@ async function checkDepartment(department: string) {
 }
 
 // create a static method called getAllRoles
-function getAllRoles() {
+async function getAllRoles() {
     // create a SQL query to select all roles with their department names
-    const sql = `SELECT roles.id, roles.title, roles.salary, departments.name AS department 
+    const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary 
                 FROM roles
                 JOIN departments ON roles.department_id = departments.id`;
-    // query the database using the pool object
-    pool.query(sql, (err: Error, res: QueryResult) => {
-        if (err) {
-            console.error('Error executing query', err);
-            return;
+
+    try {
+        // query the database using the pool object
+        const result = await pool.query(sql);
+        // log the result in a table format
+        console.log(`\nid\tname                           department              salary`);
+        console.log(`--\t-----------------              -----------             ----------`);
+        for (const role of result.rows) {
+            console.log(`${role.id}\t${role.title.padEnd(30)}${role.department.padEnd(30)}${role.salary}`);
         }
-        // variables
-        const id = res.rows[0].id;
-        const title = res.rows[0].name;
-        const salary = res.rows[0].salary;
-        const department = res.rows[0].department;
-
-        // Define column widths
-        const columnWidths = [5, 30, 5, 30]; // [ID, Title, Salary, Department]
-
-        // Log a header
-        logWithFixedLength(["ID", "Title", "Salary", "Department"], columnWidths);
-
-        // Log a separator
-        console.log("-".repeat(columnWidths.reduce((sum, width) => sum + width, 0)));
-
-        // Log data rows
-        logWithFixedLength([id, title, salary, department], columnWidths);
-    });
+    } catch (err) {
+        console.error('Error executing query', err);
+        throw err;
+    }
 }
 
 // create a static method called addNewRole

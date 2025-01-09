@@ -1,12 +1,5 @@
 //import { Pool, connectToDB } from './connection.js';
 import { pool } from '../connection.js';
-function logWithFixedLength(columns, columnWidths) {
-    const formattedRow = columns.map((col, index) => {
-        const width = columnWidths[index] || 10; // Default to 10 if no width is specified
-        return String(col).padEnd(width); // Pad each column to the specified width
-    }).join(""); // Join the columns without extra spaces between
-    console.log(formattedRow);
-}
 // create a static method called checkRole to check if a role exists in the roles table
 async function checkRole(role) {
     // create a SQL query to select the role id
@@ -17,8 +10,7 @@ async function checkRole(role) {
     return result.rows[0] ? result.rows[0].id : null;
 }
 // create a static method called getAllEmployees
-function getAllEmployees() {
-    // create a SQL query to select all employees with their roles, departments, salaries, and managers
+async function getAllEmployees() {
     const sql = `SELECT employees.id, 
                         employees.first_name, 
                         employees.last_name, 
@@ -30,29 +22,19 @@ function getAllEmployees() {
                  LEFT JOIN roles ON employees.role_id = roles.id
                  LEFT JOIN departments ON roles.department_id = departments.id
                  LEFT JOIN employees AS manager ON employees.manager_id = manager.id`;
-    // query the database using the pool object
-    pool.query(sql, (err, res) => {
-        if (err) {
-            console.error('Error executing query', err);
-            return;
+    try {
+        const result = await pool.query(sql);
+        // Log the result in a table format
+        console.log(`\nid\tfirst_name\t\tlast_name\t\ttitle\t\t\tdepartment\t\t\tsalary\t\tmanager`);
+        console.log(`--\t-----------------\t-------------\t\t--------------\t\t\t---------\t\t------\t\t------------`);
+        for (const employee of result.rows) {
+            let manager = employee.manager ? employee.manager : 'None';
+            console.log(`${employee.id}\t${(employee.first_name || '').padEnd(20)}\t${(employee.last_name || '').padEnd(20)}\t${(employee.title || '').padEnd(30)}\t${(employee.department || '').padEnd(20)}\t${(employee.salary || '0').toString().padEnd(10)}\t${manager}`);
         }
-        // variables
-        const id = res.rows[0].id;
-        const firstName = res.rows[0].first_name;
-        const lastName = res.rows[0].last_name;
-        const role = res.rows[0].title;
-        const department = res.rows[0].department;
-        const salary = res.rows[0].salary;
-        const manager = res.rows[0].manager;
-        // Define column widths
-        const columnWidths = [5, 30, 30, 30, 30, 5, 60]; // [ID, First Name, Last Name, Role, Department, Salary, Manager]
-        // Log a header
-        logWithFixedLength(["ID", "First Name", "Last Name", "Role", "Department", "Salary", "Manager"], columnWidths);
-        // Log a separator
-        console.log("-".repeat(columnWidths.reduce((sum, width) => sum + width, 0)));
-        // Log data rows
-        logWithFixedLength([id, firstName, lastName, role, department, salary, manager], columnWidths);
-    });
+    }
+    catch (err) {
+        console.error('Error executing query', err);
+    }
 }
 // create a static method called addNewEmployee
 async function addNewEmployee(firstName, lastName, role_id, manager_id) {
@@ -105,5 +87,4 @@ async function updateEmployeeRole(firstName, lastName, roleType) {
         console.error('Error executing query', err);
     }
 }
-// export the functions to be used in other files
 export { getAllEmployees, addNewEmployee, deleteEmployee, updateEmployeeRole };
