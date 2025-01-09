@@ -38,7 +38,7 @@ In the terminal: npm i, then type npm run build. Then run npm run start.
 The client runs twice if you press arrow key.
 
 ## Video Walkthrough
-
+https://app.screencastify.com/v3/watch/0eQK0LtR616ArRsvmR9i
 
 ## Questions
 
